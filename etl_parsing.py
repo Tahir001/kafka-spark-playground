@@ -27,6 +27,6 @@ class Human(object):
 Tahir = Human(name="Tahir", age=27, occupation="Engineer", health=95)
 print(Tahir.say_hi())
 print(Tahir.introduce_yourself())
-print(Tahir.say_bye())
 Tahir.its_my_birthday()
 Tahir.check_health()
+print(Tahir.say_bye())
