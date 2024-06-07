@@ -7,69 +7,45 @@ from airflow.utils.dates import days_ago
 
 #defining DAG arguments
 default_args = {
-    'owner': 'your_name_here',
+    'owner': 'Tahir',
     'start_date': days_ago(0),
-    'email': ['your_email_here'],
+    'email': ['Tahir.muhammad@mail.utoronto.ca'],
     'retries': 1,
     'retry_delay': timedelta(minutes=5),
     'email_on_retry': True,
 }
+
 # Define the ETL dag
-etl_dag = DAG(
-    dag_id= 'server-processing-logs-dag',
+etl_dag= DAG(
+    dag_id='server-processing-logs-dag',
     default_args = default_args,
     description = 'Access server logs from a url endpoint, extract, transform and load them',
     schedule_interval=timedelta(days=1),
 )
-curl_command = "curl -o https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DB0250EN-SkillsNetwork/labs/Apache%20Airflow/Build%20a%20DAG%20using%20Airflow/web-server-access-log.txt web-server-access-log.txt"
 
-task1 = BashOperator(
-    task_id = 'download-data',
-    bash_command = 'echo \Greetings. This is the second task, transformation.',
-    dag=dag,
+# Define the tasks
+# TASK 1 - Download data 
+# Define the tasks
+# TASK 1 - Download data 
+download_task = BashOperator(
+    task_id='download_data',
+    bash_command=
+    """
+    wget 'https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DB0250EN-SkillsNetwork/labs/Bash%20Scripting/ETL%20using%20shell%2 scripting/web-server-access-log.txt.gz'
+    gunzip -f web-server-access-log.txt.gz
+    echo "Extracting data"
+    # Extract the columns 1 (timestamp), 2 (latitude), 3 (longitude) and 4 (visitorid)
+    cut -d"#" -f1-4 web-server-access-log.txt > extracted-data.txt
+    """,
+    dag=etl_dag,
 )
 
 
+# Task #2 
+transform_task = BashOperator(
+    task_id = "transform_data",
+    bash_command="python3 /Users/tahir/Desktop/Github/playground_dataeng/transform_data.py",
+    dag=etl_dag,
+)
 
-"""
-# TASK: CREATE A ETL_Server_Access_Log_Processing DAG! 
-
-Write a DAG named ETL_Server_Access_Log_Processing.py.
-
-    Create the imports block.
-    Create the DAG Arguments block. You can use the default settings
-    Create the DAG definition block. The DAG should run daily.
-    Create the download task. The download task must download the server access log file which is available at the URL:
-
-    1
-
-    curl -o https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DB0250EN-SkillsNetwork/labs/Apache%20Airflow/Build%20a%20DAG%20using%20Airflow/web-server-access-log.txt web-server-access-log.txt
-
-    Create the extract task.
-
-    The server access log file contains these fields.
-
-    a. timestamp - TIMESTAMP
-    b. latitude - float
-    c. longitude - float
-    d. visitorid - char(37)
-    e. accessed_from_mobile - boolean
-    f. browser_code - int
-
-    The extract task must extract the fields timestamp and visitorid.
-
-    Create the transform task. The transform task must capitalize the visitorid.
-
-    Create the load task. The load task must compress the extracted and transformed data.
-
-    Create the task pipeline block. The pipeline block should schedule the task in the order listed below:
-        download
-        extract
-        transform
-        load
-
-    Submit the DAG.
-
-    Verify if the DAG is submitted
-
-"""
+download_task >> transform_task
