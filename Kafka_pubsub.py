@@ -1,6 +1,9 @@
+# Full file as an example
 import json
-from kafka import KafkaAdminClient, KafkaProducer, KafkaConsumer
+from kafka.admin import KafkaAdminClient
 from kafka.admin import NewTopic, ConfigResource, ConfigResourceType
+from kafka import KafkaProducer 
+from kafka import KafkaConsumer
 
 # Create a Kafka Admin client
 # This client allows us to create, delete, and manage Kafka topics.
