@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: zookeeper
+    restart: always
+    ports:
+      - "2181:2181"
+  kafka:
+    image: apache/kafka
+    restart: always
+    ports:
+      - "9092:9092"
+    environment:
+      ZOOKEEPER_CONNECT: zookeeper:2181
+    depends_on:
+      - zookeeper
