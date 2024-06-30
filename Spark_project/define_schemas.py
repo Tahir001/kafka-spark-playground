@@ -15,7 +15,7 @@ schema = StructType([
     StructField("Phone", StringType(), True),
 ])
 
-#create a dataframe on top a csv file
+#create a dataframe on top a csv file in spark
 df = (spark.read
     .format("csv")
     .schema(schema)
@@ -27,3 +27,6 @@ df.show()
 
 # Display the schema 
 df.printSchema()
+
+# Close the spark session
+spark.stop()
