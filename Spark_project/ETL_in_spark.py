@@ -3,8 +3,14 @@
 # Import required libraries 
 import pandas as pd
 from pyspark.sql import SparkSession
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Create a spark session 
+
+# At the start of your script
+logger.info("Starting Spark session")
 spark = SparkSession.builder.appName("cars").getOrCreate()
 
 # Create a DF from pandas df
@@ -46,4 +52,8 @@ sdf_filtered.show()
 sdf_filtered.write.parquet("filtered_mtcars.parquet")
 
 # Stop the Spark session
-spark.stop()
+# Just before spark.stop()
+logger.info("Spark session complete. Web UI should be available.")
+
+input("Press Enter to terminate...")
+# spark.stop()
